@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trixie's Digital Portfolio</title>
+<link href="https://googleapis.com" rel="stylesheet">
+<style>
+:root {
+    --bg: #fefce8; --card: #ffffff; --tint: #fffbeb; --ink: #36282e; --muted: #6e5b63;
+    --pink: #ec4899; --pink-soft: #fce7f3; --pink-border: #f9a8d4;
+    --yellow: #fef08a; --yellow-border: #fde047; --yellow-ink: #36282e;
+}
+body.dark {
+    --bg: #161118; --card: #241c28; --tint: #2f2435; --ink: #fdf2f8; --muted: #e2d1dc;
+    --pink: #f472b6; --pink-soft: #3b2336; --pink-border: #7a4968;
+    --yellow: #fde047; --yellow-border: #facc15; --yellow-ink: #23181e;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.65; transition: background 0.3s, color 0.3s; }
+@keyframes floatPolaroid { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(-1.5deg) translateY(-6px); } }
+@keyframes wheelSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes engineIdle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+@keyframes crashShake { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-5deg) translateY(-3px); } 75% { transform: rotate(5deg); } }
+@keyframes wavePulse { 0% { opacity: 0.9; transform: scale(0.9); } 100% { opacity: 0; transform: scale(1.25); } }
+@keyframes screenPop { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes iconWiggle { 0%, 100% { transform: rotate(0deg) scale(1.1); } 25% { transform: rotate(-12deg) scale(1.15); } 75% { transform: rotate(12deg) scale(1.15); } }
+
+nav { position: sticky; top: 0; z-index: 100; background: var(--card); border-bottom: 2px solid var(--pink-border); padding: 0.85rem 5%; display: flex; justify-content: space-between; align-items: center; }
+.brand { font-weight: 800; font-size: 1.15rem; color: var(--pink); text-decoration: none; transition: transform 0.2s; }
+.brand:hover { transform: scale(1.03); }
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+.nav-links { display: flex; gap: 1.1rem; }
+.nav-links a { font-size: 0.86rem; font-weight: 700; color: var(--ink); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--pink); }
+
+.mode-toggle, .btn-touch, .sim-lbl, .sr-btn { position: relative; overflow: hidden; cursor: pointer; transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease; }
+.mode-toggle { background: var(--yellow); color: var(--yellow-ink); border: 1.5px solid var(--yellow-border); padding: 0.35rem 0.95rem; border-radius: 50px; font-size: 0.8rem; font-weight: 800; }
+.mode-toggle:hover, .sim-lbl:hover, .sr-btn:hover { transform: translateY(-1.5px); box-shadow: 0 5px 12px rgba(0, 0, 0, 0.14); }
+.mode-toggle:active, .btn-touch:active, .sim-lbl:active, .sr-btn:active { transform: translateY(1px) scale(0.97); }
+.btn-touch { display: inline-block; padding: 0.72rem 1.7rem; border-radius: 14px; font-weight: 700; font-size: 0.92rem; text-decoration: none; background: var(--pink); color: #fff; border: 2px solid var(--pink); }
+.btn-touch:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(236, 72, 153, 0.35); }
+.btn-touch::after, .mode-toggle::after { content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent); transition: left 0.45s ease; }
+.btn-touch:hover::after, .mode-toggle:hover::after { left: 135%; }
+.wrap { max-width: 940px; width: 92%; margin: 2.2rem auto; }
+.hero { background: linear-gradient(135deg, var(--card), var(--pink-soft), var(--tint)); border: 2px solid var(--pink-border); border-radius: 30px; padding: 2.4rem 2.2rem; margin-bottom: 2.4rem; display: flex; align-items: center; gap: 2.3rem; }
+.polaroid-wrap { position: relative; flex-shrink: 0; width: 230px; padding: 10px; }
+.polaroid-back { position: absolute; inset: 12px 14px 6px 4px; background: var(--pink-soft); border: 2px solid var(--pink-border); border-radius: 20px; transform: rotate(-8deg); z-index: 1; }
+.polaroid-card { position: relative; z-index: 2; background: var(--yellow); border: 2px solid var(--yellow-border); border-radius: 20px; padding: 0.95rem; animation: floatPolaroid 4.5s ease-in-out infinite; }
+.paperclip { position: absolute; top: -14px; left: 18px; width: 24px; height: 54px; border: 3.5px solid var(--pink); border-radius: 14px; transform: rotate(-14deg); z-index: 4; }
+.photo-box { position: relative; width: 100%; height: 220px; background: var(--card); border-radius: 14px; overflow: hidden; border: 1.5px solid var(--pink-border); }
+.photo-box img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.sticker-dot { position: absolute; top: 12px; right: 12px; width: 16px; height: 16px; border-radius: 50%; background: var(--pink); border: 2px solid var(--card); z-index: 3; }
+.script-greeting { font-family: 'Caveat', cursive; font-size: 3.5rem; font-weight: 700; line-height: 1.05; margin-bottom: 0.85rem; }
+.script-greeting span { color: var(--pink); }
+.mono-bio {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.87rem;
+    line-height: 1.75;
+    margin-bottom: 1.4rem;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+section { margin-bottom: 2.4rem; scroll-margin-top: 85px; }
+.section-header { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 1.15rem; }
+.section-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--pink); }
+.section-header h2 { font-size: 1.5rem; font-weight: 800; }
+
+.skills-bento { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
+.skill-card { background: var(--card); border: 2px solid var(--pink-border); border-radius: 22px; padding: 1.4rem; transition: 0.25s; }
+.skill-card:hover { transform: translateY(-4px); border-color: var(--pink); box-shadow: 0 10px 22px rgba(236, 72, 153, 0.12); }
+.skill-badge { display: inline-block; background: var(--yellow); color: var(--yellow-ink); border: 1px solid var(--yellow-border); padding: 0.18rem 0.72rem; border-radius: 50px; font-size: 0.74rem; font-weight: 800; margin-bottom: 0.6rem; }
+.skill-card h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.35rem; }
+.skill-card p { font-size: 0.88rem; color: var(--muted); }
+.project-card { background: var(--card); border: 2px solid var(--pink-border); border-radius: 26px; padding: 2rem; }
+.project-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.65rem; margin-bottom: 0.45rem; }
+.project-top h3 { font-size: 1.2rem; font-weight: 800; line-height: 1.35; }
+.role-tag { background: var(--yellow); color: var(--yellow-ink); border: 1.5px solid var(--yellow-border); padding: 0.28rem 0.9rem; border-radius: 50px; font-size: 0.78rem; font-weight: 800; }
+.project-sub { font-size: 0.86rem; font-weight: 700; color: var(--pink); margin-bottom: 0.85rem; }
+.project-desc { font-size: 0.95rem; color: var(--muted); margin-bottom: 1.25rem; }
+
+.sim-box { background: linear-gradient(145deg, var(--tint), var(--pink-soft)); border: 2px solid var(--pink-border); border-radius: 24px; padding: 1.3rem; margin-bottom: 1.4rem; }
+.sim-radio { display: none; }
+.sim-topbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1rem; }
+.sim-title { font-family: 'Space Mono', monospace; font-size: 0.78rem; font-weight: 700; color: var(--pink); text-transform: uppercase; }
+.sim-btns { display: flex; gap: 0.38rem; flex-wrap: wrap; }
+.sim-lbl { background: var(--card); color: var(--ink); border: 1.5px solid var(--pink-border); padding: 0.32rem 0.75rem; border-radius: 50px; font-size: 0.72rem; font-weight: 700; user-select: none; }
+#r-safe:checked ~ .sim-topbar label[for="r-safe"],
+#r-alc:checked ~ .sim-topbar label[for="r-alc"],
+#r-pass:checked ~ .sim-topbar label[for="r-pass"],
+#r-swap:checked ~ .sim-topbar label[for="r-swap"],
+#r-pos:checked ~ .sim-topbar label[for="r-pos"],
+#r-crash:checked ~ .sim-topbar label[for="r-crash"] { background: var(--pink); color: #fff; border-color: var(--pink); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
+
+.sim-grid { display: grid; grid-template-columns: 1.15fr 1.05fr; gap: 1.15rem; align-items: stretch; }
+.moto-3d-card { background: var(--card); border: 2px solid var(--pink-border); border-radius: 20px; padding: 0.9rem; transition: transform 0.3s ease; display: flex; flex-direction: column; justify-content: space-between; }
+.moto-3d-card:hover { transform: perspective(950px) rotateY(0deg); }
+.moto-badges { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; font-family: 'Space Mono', monospace; font-size: 0.63rem; font-weight: 700; gap: 0.3rem; flex-wrap: wrap; }
+.hw-tag { background: var(--yellow); color: var(--yellow-ink); padding: 0.16rem 0.55rem; border-radius: 50px; }
+.engine-pill { padding: 0.16rem 0.6rem; border-radius: 50px; background: var(--pink-soft); color: var(--pink); border: 1px solid var(--pink-border); }
+.css-stage { position: relative; height: 225px; background: var(--tint); border: 1.5px dashed var(--pink-border); border-radius: 14px; overflow: hidden; margin: 0.35rem 0; }
+.road-line { position: absolute; bottom: 13px; left: 0; width: 100%; height: 3px; background: repeating-linear-gradient(90deg, var(--pink-border) 0 18px, transparent 18px 32px); }
+.range-zone { position: absolute; top: 18px; right: 18px; width: 130px; height: 130px; border-radius: 50%; background: rgba(236, 72, 153, 0.1); border: 1.5px dashed var(--pink); }
+.range-tag { position: absolute; top: 8px; right: 12px; font-family: 'Space Mono', monospace; font-size: 0.56rem; font-weight: 700; color: var(--pink); }
+.helmet-tag { position: absolute; top: 8px; left: 10px; font-family: 'Space Mono', monospace; font-size: 0.55rem; font-weight: 700; color: var(--ink); background: var(--card); padding: 2px 6px; border-radius: 6px; border: 1px solid var(--pink-border); }
+.rider-rig { position: absolute; inset: 0; transition: transform 0.35s ease; }
+
+.headlight { position: absolute; top: 88px; right: 0; width: 92px; height: 44px; background: linear-gradient(90deg, rgba(253, 224, 71, 0.9), transparent); clip-path: polygon(0 32%, 100% 0, 100% 100%, 0 68%); transition: 0.25s; }
+.moto-fork { position: absolute; bottom: 42px; left: 194px; width: 7px; height: 68px; background: #36282e; border-radius: 4px; transform: rotate(-24deg); }
+.moto-handlebar { position: absolute; top: 90px; left: 178px; width: 22px; height: 7px; background: #36282e; border-radius: 4px; }
+.moto-windshield { position: absolute; top: 74px; left: 192px; width: 14px; height: 22px; background: var(--pink-soft); border: 2px solid var(--pink); border-radius: 4px 12px 2px 2px; transform: rotate(-18deg); }
+.moto-tank { position: absolute; bottom: 68px; left: 148px; width: 52px; height: 26px; background: var(--pink); border: 2.5px solid #36282e; border-radius: 18px 26px 8px 8px; transform: rotate(-6deg); }
+.moto-seat { position: absolute; bottom: 66px; left: 94px; width: 62px; height: 15px; background: #36282e; border-radius: 10px 4px 6px 12px; }
+.moto-tail { position: absolute; bottom: 72px; left: 76px; width: 32px; height: 14px; background: var(--pink); border: 2px solid #36282e; border-radius: 10px 4px 4px 8px; transform: rotate(-12deg); }
+.moto-exhaust { position: absolute; bottom: 32px; left: 66px; width: 64px; height: 9px; background: #6e5b63; border: 1.5px solid #36282e; border-radius: 6px; transform: rotate(-8deg); }
+.esp-box { position: absolute; bottom: 44px; left: 132px; background: var(--yellow); color: var(--yellow-ink); border: 2px solid #36282e; border-radius: 7px; padding: 2px 5px; font-family: 'Space Mono', monospace; font-size: 0.52rem; font-weight: 700; text-align: center; line-height: 1.1; z-index: 3; }
+
+.wheel { position: absolute; bottom: 14px; width: 54px; height: 54px; border-radius: 50%; background: #36282e; border: 5px solid var(--pink-soft); outline: 3px solid var(--pink); }
+.wheel::before, .wheel::after { content: ''; position: absolute; top: 50%; left: 8%; width: 84%; height: 2.5px; background: var(--pink); }
+.wheel::before { transform: translateY(-50%); }
+.wheel::after { transform: translateY(-50%) rotate(90deg); }
+.wheel-back { left: 68px; }
+.wheel-front { left: 198px; }
+.driver-group { position: absolute; inset: 0; transition: transform 0.35s ease; }
+.driver-torso { position: absolute; bottom: 78px; left: 126px; width: 34px; height: 44px; background: #36282e; border-radius: 16px 16px 4px 4px; transform: rotate(18deg); }
+.driver-arm { position: absolute; top: 88px; left: 146px; width: 38px; height: 9px; background: var(--pink); border: 1.5px solid #36282e; border-radius: 6px; transform: rotate(10deg); }
+.driver-leg { position: absolute; bottom: 44px; left: 136px; width: 12px; height: 38px; background: #36282e; border-radius: 6px; transform: rotate(-14deg); }
+.helmet-head { position: absolute; top: 38px; left: 138px; width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 2.5px solid #36282e; }
+.helmet-visor { position: absolute; top: 9px; right: -2px; width: 21px; height: 13px; background: var(--pink); border-radius: 4px 10px 6px 4px; }
+.helmet-wave { position: absolute; top: 30px; left: 130px; width: 56px; height: 56px; border-radius: 50%; border: 2px dashed var(--pink); animation: wavePulse 1.5s ease-out infinite; }
+
+.passenger-rig, .alert-badge { opacity: 0; transition: 0.25s; }
+.passenger-body { position: absolute; bottom: 78px; left: 88px; width: 32px; height: 38px; background: #6e5b63; border-radius: 14px 14px 4px 4px; transform: rotate(8deg); }
+.passenger-head { position: absolute; top: 48px; left: 88px; width: 32px; height: 32px; border-radius: 50%; background: var(--yellow); border: 2px solid #36282e; }
+.alert-badge { position: absolute; top: 86px; left: 80px; background: var(--pink); color: #fff; font-family: 'Space Mono', monospace; font-size: 0.58rem; font-weight: 700; padding: 3px 8px; border-radius: 8px; z-index: 5; }
+
+#r-safe:checked ~ .sim-grid .rider-rig, #r-pass:checked ~ .sim-grid .rider-rig { animation: engineIdle 0.35s ease-in-out infinite; }
+#r-safe:checked ~ .sim-grid .wheel, #r-pass:checked ~ .sim-grid .wheel { animation: wheelSpin 0.85s linear infinite; }
+#r-pass:checked ~ .sim-grid .passenger-rig { opacity: 1; }
+#r-alc:checked ~ .sim-grid .headlight { opacity: 0; }
+#r-alc:checked ~ .sim-grid .engine-pill { background: var(--pink); color: #fff; }
+#r-swap:checked ~ .sim-grid .headlight { opacity: 0; }
+#r-swap:checked ~ .sim-grid .passenger-rig, #r-swap:checked ~ .sim-grid .badge-swap { opacity: 1; }
+#r-swap:checked ~ .sim-grid .engine-pill { background: var(--pink); color: #fff; }
+#r-pos:checked ~ .sim-grid .headlight { opacity: 0; }
+#r-pos:checked ~ .sim-grid .driver-group { transform: translateX(-36px); }
+#r-pos:checked ~ .sim-grid .badge-pos { opacity: 1; }
+#r-pos:checked ~ .sim-grid .engine-pill { background: var(--pink); color: #fff; }
+#r-crash:checked ~ .sim-grid .rider-rig { animation: crashShake 0.45s ease-in-out infinite; }
+#r-crash:checked ~ .sim-grid .headlight { opacity: 0.2; }
+#r-crash:checked ~ .sim-grid .badge-crash { opacity: 1; background: var(--yellow); color: var(--yellow-ink); border: 2px solid var(--pink); }
+#r-crash:checked ~ .sim-grid .engine-pill { background: var(--pink); color: #fff; }
+
+.st-safe, .st-alc, .st-pass, .st-swap, .st-pos, .st-crash { display: none; }
+#r-safe:checked ~ .sim-grid .st-safe, #r-safe:checked ~ .sim-caption .st-safe { display: inline; }
+#r-alc:checked ~ .sim-grid .st-alc, #r-alc:checked ~ .sim-caption .st-alc { display: inline; }
+#r-pass:checked ~ .sim-grid .st-pass, #r-pass:checked ~ .sim-caption .st-pass { display: inline; }
+#r-swap:checked ~ .sim-grid .st-swap, #r-swap:checked ~ .sim-caption .st-swap { display: inline; }
+#r-pos:checked ~ .sim-grid .st-pos, #r-pos:checked ~ .sim-caption .st-pos { display: inline; }
+#r-crash:checked ~ .sim-grid .st-crash, #r-crash:checked ~ .sim-caption .st-crash { display: inline; }
+
+.sensor-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.4rem; margin-top: 0.45rem; }
+.s-chip { background: var(--tint); border: 1px solid var(--pink-border); border-radius: 10px; padding: 0.35rem 0.45rem; text-align: center; font-family: 'Space Mono', monospace; font-size: 0.62rem; }
+.s-chip strong { display: block; color: var(--pink); font-size: 0.64rem; }
+/* SafeRide Mobile App Prototype */
+.sr-phone {
+    position: relative; z-index: 30; pointer-events: auto;
+    width: 100%; max-width: 285px; justify-self: center; align-self: center;
+    height: 510px;
+    background: #f8fafc; color: #111827; border: 2px solid #1e293b; border-radius: 26px;
+    padding: 0.65rem; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+    display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.sr-phone:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.16);
+}
+self: center;
+    height: 510px;
+    background: #f8fafc; color: #111827; border: 3px solid #1e293b; border-radius: 30px;
+    padding: 0.65rem; box-shadow: -6px 10px 24px rgba(15, 23, 42, 0.2), -3px 3px 0 #334155;
+    display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+}
+.sr-phone button, .sr-phone input { pointer-events: auto; position: relative; z-index: 35; }
+.sr-phone-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+.sr-screen.active {
+    display: block !important;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+/* Optional: clean thin scrollbar inside the phone */
+.sr-screen.active::-webkit-scrollbar { width: 4px; }
+.sr-screen.active::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.sr-app-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.3rem; margin-bottom: 0.35rem; border-bottom: 1px solid #e5e7eb; }
+.sr-app-brand { font-size: 0.85rem; font-weight: 800; color: #111827; letter-spacing: -0.02em; }
+.sr-app-badge { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 1px 7px; border-radius: 50px; font-size: 0.54rem; font-weight: 700; }
+
+.sr-screen { display: none !important; animation: screenPop 0.2s ease; }
+.sr-screen.active { display: block !important; }
+
+.sr-splash { text-align: center; padding: 1.4rem 0.5rem 0.8rem; }
+.sr-pin { width: 44px; height: 54px; background: #111827; color: #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); margin: 0 auto 0.8rem; display: flex; align-items: center; justify-content: center; }
+.sr-pin span { transform: rotate(45deg); font-size: 0.9rem; font-weight: 800; }
+.sr-logo { font-size: 1.35rem; font-weight: 800; color: #111827; margin-bottom: 0.25rem; }
+.sr-sub { font-size: 0.65rem; color: #6b7280; margin-bottom: 1.4rem; line-height: 1.4; }
+.sr-btn-black { display: block; width: 100%; background: #111827; color: #fff; border: none; border-radius: 10px; padding: 0.52rem; font-size: 0.68rem; font-weight: 700; margin-bottom: 0.45rem; }
+.sr-btn-white { display: block; width: 100%; background: #fff; color: #111827; border: 1.5px solid #d1d5db; border-radius: 10px; padding: 0.5rem; font-size: 0.68rem; font-weight: 700; margin-bottom: 0.45rem; }
+.sr-btn-blue { display: block; width: 100%; background: #3b82f6; color: #fff; border: none; border-radius: 10px; padding: 0.5rem; font-size: 0.68rem; font-weight: 700; margin-top: 0.35rem; }
+.sr-btn-red { display: block; width: 100%; background: #ef4444; color: #fff; border: none; border-radius: 10px; padding: 0.5rem; font-size: 0.68rem; font-weight: 700; margin-top: 0.35rem; }
+.sr-field { margin-bottom: 0.35rem; text-align: left; }
+.sr-field label { display: block; font-size: 0.58rem; font-weight: 700; color: #4b5563; margin-bottom: 0.12rem; }
+.sr-input { width: 100%; background: #fff; color: #111827; border: 1.5px solid #d1d5db; border-radius: 8px; padding: 0.35rem 0.5rem; font-size: 0.66rem; outline: none; }
+.sr-input:focus { border-color: #3b82f6; }
+.sr-phone-row { display: flex; align-items: center; background: #fff; border: 1.5px solid #d1d5db; border-radius: 8px; padding: 0 0.45rem; }
+.sr-phone-row span { font-size: 0.66rem; font-weight: 700; color: #111827; padding-right: 0.4rem; border-right: 1px solid #e5e7eb; }
+.sr-phone-row input { border: none; padding: 0.35rem 0.4rem; width: 100%; font-size: 0.66rem; outline: none; }
+.sr-otp-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.25rem; margin: 0.55rem 0; }
+.sr-otp-box { width: 100%; text-align: center; font-weight: 800; font-size: 0.78rem; padding: 0.36rem 0; border: 1.5px solid #111827; border-radius: 8px; background: #fff; }
+.sr-sms-banner { background: #18181b; color: #f4f4f5; border-radius: 12px; padding: 0.45rem 0.6rem; font-size: 0.58rem; text-align: left; margin-bottom: 0.65rem; line-height: 1.35; }
+.sr-google-item { display: flex; align-items: center; gap: 0.5rem; width: 100%; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0.45rem 0.55rem; margin-bottom: 0.38rem; text-align: left; }
+.sr-avatar { width: 24px; height: 24px; border-radius: 50%; background: #ea580c; color: #fff; font-size: 0.65rem; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+.sr-sec-title { font-size: 0.66rem; font-weight: 800; color: #111827; margin: 0.32rem 0 0.22rem; display: flex; justify-content: space-between; align-items: center; }
+.sr-map-card { background: linear-gradient(135deg, #fef9c3 0%, #e0f2fe 50%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 12px; height: 64px; position: relative; overflow: hidden; padding: 0.35rem 0.5rem; font-size: 0.55rem; color: #475569; }
+.sr-map-pin { position: absolute; top: 24px; left: 48%; color: #ef4444; font-size: 0.85rem; font-weight: 800; }
+.sr-dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.38rem; }
+.sr-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 0.42rem 0.5rem; }
+.sr-pill-row { display: flex; gap: 0.2rem; margin: 0.22rem 0; flex-wrap: wrap; }
+.sr-tag-green { background: #dcfce7; color: #15803d; padding: 1px 5px; border-radius: 5px; font-size: 0.52rem; font-weight: 700; }
+.sr-tag-orange { background: #ffedd5; color: #c2410c; padding: 1px 5px; border-radius: 5px; font-size: 0.52rem; font-weight: 700; }
+.sr-tag-gray { background: #f3f4f6; color: #4b5563; padding: 1px 5px; border-radius: 5px; font-size: 0.52rem; font-weight: 700; }
+.sr-lock-red { background: #fee2e2; color: #b91c1c; border-radius: 9px; padding: 0.35rem 0.45rem; font-size: 0.58rem; margin-bottom: 0.3rem; }
+.sr-lock-amber { background: #ffedd5; color: #c2410c; border-radius: 9px; padding: 0.35rem 0.45rem; font-size: 0.58rem; margin-bottom: 0.3rem; }
+.sr-lock-green { background: #dcfce7; color: #15803d; border-radius: 9px; padding: 0.35rem 0.45rem; font-size: 0.58rem; margin-bottom: 0.3rem; }
+.sr-chk { font-size: 0.57rem; padding: 0.12rem 0; display: flex; align-items: center; gap: 0.32rem; color: #1f2937; }
+.sr-dot-ok { color: #16a34a; font-weight: 800; }
+.sr-dot-no { color: #dc2626; font-weight: 800; }
+
+.sr-modal-overlay { background: rgba(15, 23, 42, 0.55); border-radius: 14px; padding: 0.65rem; margin-bottom: 0.35rem; text-align: center; }
+.sr-modal-box { background: #fff; border-radius: 14px; padding: 0.65rem; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
+.sr-tabs { display: grid; grid-template-columns: 1fr 1fr; background: #e5e7eb; border-radius: 9px; padding: 2px; margin-bottom: 0.4rem; }
+.sr-tab { border: none; background: transparent; padding: 0.26rem; border-radius: 7px; font-size: 0.6rem; font-weight: 700; color: #4b5563; }
+.sr-tab.active { background: #fff; color: #111827; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.sr-hist-item { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 0.34rem 0.48rem; margin-bottom: 0.28rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.58rem; }
+
+.sr-bottom-nav { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #e5e7eb; padding-top: 0.35rem; margin-top: 0.4rem; background: #fff; border-radius: 0 0 20px 20px; }
+.sr-nav-btn { border: none; background: transparent; font-size: 0.58rem; font-weight: 700; color: #6b7280; padding: 0.22rem; text-align: center; }
+.sr-nav-btn.active { color: #2563eb; }
+.sim-caption { margin-top: 1rem; background: var(--card); border: 1.5px solid var(--pink-border); border-radius: 12px; padding: 0.65rem 1rem; font-family: 'Space Mono', monospace; font-size: 0.77rem; text-align: center; }
+.detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.2rem; }
+.detail-box { background: var(--tint); border: 1.5px solid var(--pink-border); border-radius: 18px; padding: 1.2rem; }
+.detail-box h4 { font-size: 0.94rem; font-weight: 800; color: var(--pink); margin-bottom: 0.45rem; }
+.detail-box ul { padding-left: 1.05rem; font-size: 0.85rem; color: var(--muted); }
+.pill-row { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.pill { background: var(--pink-soft); color: var(--pink); border: 1px solid var(--pink-border); padding: 0.24rem 0.85rem; border-radius: 50px; font-size: 0.78rem; font-weight: 700; }
+
+.contact-panel { background: var(--tint); border: 2px solid var(--pink-border); border-radius: 26px; padding: 2rem; }
+.contact-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; }
+.c-box { background: var(--card); border: 1.5px solid var(--pink-border); border-radius: 16px; padding: 1.1rem 1.25rem; }
+.c-box label, .c-link-card label { display: block; font-size: 0.74rem; font-weight: 800; text-transform: uppercase; color: var(--pink); margin-bottom: 0.25rem; cursor: pointer; }
+.c-box p { font-size: 0.96rem; font-weight: 700; color: var(--ink); }
+.c-link-card { display: block; text-decoration: none; background: var(--card); border: 2px solid var(--pink-border); border-radius: 16px; padding: 1.1rem 1.25rem; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease; }
+.c-link-card:hover { transform: translateY(-4px) scale(1.015); border-color: var(--pink); background: var(--pink-soft); box-shadow: 0 10px 22px rgba(236, 72, 153, 0.2); }
+.c-link-card:active { transform: translateY(1px) scale(0.98); background: var(--yellow); border-color: var(--yellow-border); }
+.c-link-card:hover .c-icon { animation: iconWiggle 0.55s ease; display: inline-block; }
+.c-link-val { font-size: 0.98rem; font-weight: 800; color: var(--ink); }
+.c-link-card:hover .c-link-val { color: var(--pink); text-decoration: underline; }
+.c-link-card:active .c-link-val { color: var(--yellow-ink); }
+
+footer { text-align: center; padding: 1.75rem; font-size: 0.85rem; color: var(--muted); }
+@media (max-width: 780px) {
+    .sim-grid, .detail-grid, .skills-bento, .contact-list { grid-template-columns: 1fr; }
+    .moto-3d-card {
+    background: var(--card);
+    border: 2px solid var(--pink-border);
+    border-radius: 20px;
+    padding: 0.9rem;
+    transform: translateY(0) !important;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.moto-3d-card:hover {
+    transform: translateY(-4px) !important;
+    border-color: var(--pink);
+    box-shadow: 0 10px 22px rgba(236, 72, 153, 0.14);
+}
+</style>
+</head>
+<body>
+<nav>
+    <a href="#" class="brand">Trixie's Portfolio</a>
+    <div class="nav-right">
+        <div class="nav-links"><a href="#skills">Key Skills</a><a href="#project">Project</a><a href="#contact">Contact</a></div>
+        <button type="button" class="mode-toggle" onclick="document.body.classList.toggle('dark')">Light / Dark</button>
+    </div>
+</nav>
+
+<div class="wrap">
+    <header class="hero">
+        <div class="polaroid-wrap">
+            <div class="polaroid-back"></div>
+            <div class="polaroid-card">
+                <div class="paperclip"></div>
+                <div class="photo-box"><span class="sticker-dot"></span><img src="trixie.jpg" alt="Trixie Gaspar"></div>
+            </div>
+        </div>
+        <div>
+            <h1 class="script-greeting">Hi, I'm <span>Trixie!</span></h1>
+            <p class="mono-bio">I am a Computer Science student with a strong passion for technical documentation, clear communication, and organizing complex information. I enjoy breaking down technical concepts and ensuring accuracy in every project. I am eager to expand my knowledge, gain hands-on experience, and grow my profession in IT field.</p>
+            <a href="#contact" class="btn-touch">Get in Touch</a>
+        </div>
+    </header>
+
+    <section id="skills">
+        <div class="section-header"><span class="section-dot"></span><h2>Key Skills</h2></div>
+        <div class="skills-bento">
+            <div class="skill-card"><span class="skill-badge">Documentation</span><h3>Technical Writing &amp; Microsoft Word</h3><p>Structuring, formatting, and refining complete academic thesis papers, user manuals, system diagrams, and QA reports in Microsoft Word.</p></div>
+            <div class="skill-card"><span class="skill-badge">Design</span><h3>UI/UX &amp; Visual Layout</h3><p>Building clean application storyboards, wireframes, and presentation visuals using Figma, Canva, HTML, and CSS.</p></div>
+            <div class="skill-card"><span class="skill-badge">Systems</span><h3>System Analysis &amp; QA Testing</h3><p>Translating IoT hardware-software workflows into Use Case diagrams, IPO models, and Alpha/Beta testing matrices.</p></div>
+            <div class="skill-card"><span class="skill-badge">Security</span><h3>Cybersecurity Fundamentals</h3><p>Cisco Networking Academy certified in Cyber Threat Management and Digital Safety with a security-first mindset.</p></div>
+        </div>
+    </section>
+    <section id="project">
+        <div class="section-header"><span class="section-dot"></span><h2>Featured Project</h2></div>
+        <div class="project-card">
+            <div class="project-top">
+                <h3>Smart Motorcycle Safety System with Helmet Detection, Breathalyzer Ignition Interlock, Accident SMS Alert, and Mobile Application Monitoring</h3>
+                <span class="role-tag">Lead Paper Documenter &amp; Co-Researcher</span>
+            </div>
+            <div class="project-sub">BS Computer Science Thesis Project</div>
+            <p class="project-desc">An IoT rider safety prototype pairing an ESP32-powered smart helmet and motorcycle ignition interlock with the <strong>SafeRide</strong> mobile monitoring application to enforce helmet compliance, prevent drunk driving, block passenger bypass attempts, and send automated GPS crash alerts via SMS.</p>
+
+            <div class="sim-box">
+                <input type="radio" name="sim-mode" id="r-safe" class="sim-radio" checked>
+                <input type="radio" name="sim-mode" id="r-alc" class="sim-radio">
+                <input type="radio" name="sim-mode" id="r-pass" class="sim-radio">
+                <input type="radio" name="sim-mode" id="r-swap" class="sim-radio">
+                <input type="radio" name="sim-mode" id="r-pos" class="sim-radio">
+                <input type="radio" name="sim-mode" id="r-crash" class="sim-radio">
+
+                <div class="sim-topbar">
+                    <span class="sim-title">&#9654; 3D Motorcycle &amp; SafeRide App Prototype</span>
+                    <div class="sim-btns">
+                        <label for="r-safe" class="sim-lbl" data-scenario="safe">Ready to Ride</label>
+                        <label for="r-alc" class="sim-lbl" data-scenario="alc">Alcohol Detected</label>
+                        <label for="r-pass" class="sim-lbl" data-scenario="pass">With Passenger</label>
+                        <label for="r-swap" class="sim-lbl" data-scenario="swap">Helmet Swap</label>
+                        <label for="r-pos" class="sim-lbl" data-scenario="pos">Out of Position</label>
+                        <label for="r-crash" class="sim-lbl" data-scenario="crash">Crash SMS</label>
+                    </div>
+                </div>
+
+                <div class="sim-grid">
+                    <div class="moto-3d-card">
+                        <div class="moto-badges">
+                            <span class="hw-tag">XIAO ESP32-C6 + DW3000 + ESP32</span>
+                            <span class="engine-pill">
+                                <span class="st-safe">SPDT RELAY: ON</span>
+                                <span class="st-alc">RELAY: LOCKED</span>
+                                <span class="st-pass">TANDEM: VALID</span>
+                                <span class="st-swap">SWAP BLOCKED</span>
+                                <span class="st-pos">CUTOFF IN 9S</span>
+                                <span class="st-crash">CRASH ALERT</span>
+                            </span>
+                        </div>
+                        <div class="css-stage">
+                            <div class="road-line"></div>
+                            <div class="range-zone"></div>
+                            <span class="range-tag">DW3000 + RSSI ZONE</span>
+                            <span class="helmet-tag">XIAO C6 + MQ-3 + 3.7V BAT</span>
+
+                            <div class="rider-rig">
+                                <div class="headlight"></div>
+                                <div class="passenger-rig">
+                                    <div class="passenger-body"></div>
+                                    <div class="passenger-head"></div>
+                                </div>
+                                <div class="driver-group">
+                                    <div class="driver-torso"></div>
+                                    <div class="driver-arm"></div>
+                                    <div class="driver-leg"></div>
+                                    <div class="helmet-wave"></div>
+                                    <div class="helmet-head"><div class="helmet-visor"></div></div>
+                                </div>
+                                <div class="moto-exhaust"></div>
+                                <div class="moto-tail"></div>
+                                <div class="moto-seat"></div>
+                                <div class="moto-tank"></div>
+                                <div class="moto-windshield"></div>
+                                <div class="moto-handlebar"></div>
+                                <div class="moto-fork"></div>
+                                <div class="esp-box">ESP32+LM2596S<br>MPU6050+RELAY</div>
+                                <div class="wheel wheel-back"></div>
+                                <div class="wheel wheel-front"></div>
+                                <div class="alert-badge badge-swap">HELMETS SWAPPED!</div>
+                                <div class="alert-badge badge-pos">DRIVER OUT OF POSITION!</div>
+                                <div class="alert-badge badge-crash">COLLISION IMPACT!</div>
+                            </div>
+                        </div>
+
+                        <div class="sensor-strip">
+                            <div class="s-chip"><strong>FSR/IR + Seat Check</strong><span class="st-safe">Helmet Worn &bull; Seated</span><span class="st-alc">Helmet Worn &bull; Seated</span><span class="st-pass">Driver + Passenger OK</span><span class="st-swap">Swapped Position!</span><span class="st-pos">Driver Too Far!</span><span class="st-crash">Driver Seat Linked</span></div>
+                            <div class="s-chip"><strong>MQ-3 + TPS63020 5V</strong><span class="st-safe">0.00% No Alcohol</span><span class="st-alc">ALCOHOL DETECTED!</span><span class="st-pass">0.00% Passed</span><span class="st-swap">Bypass Rejected</span><span class="st-pos">Passed (0.00%)</span><span class="st-crash">Ride In Progress</span></div>
+                            <div class="s-chip"><strong>DW3000 + BLE RSSI</strong><span class="st-safe">-42 dBm (Valid Zone)</span><span class="st-alc">-43 dBm (Valid Zone)</span><span class="st-pass">Helmets Not Swapped</span><span class="st-swap">-84 dBm (TOO FAR!)</span><span class="st-pos">Out of Range</span><span class="st-crash">-41 dBm Connected</span></div>
+                            <div class="s-chip"><strong>MPU6050 + SPDT Relay</strong><span class="st-safe">Normal &bull; Unlocked</span><span class="st-alc">Ignition Locked</span><span class="st-pass">Unlocked &bull; Tandem</span><span class="st-swap">Ignition Locked</span><span class="st-pos">Engine Cuts Off in 9s</span><span class="st-crash">COLLISION &bull; SMS SENT</span></div>
+                        </div>
+                    </div>
+                    <!-- Interactive SafeRide App (Top-Left SafeRide Header) -->
+                    <div class="sr-phone" id="sr-phone-app">
+                        <div class="sr-phone-body">
+                            <div class="sr-notch"></div>
+                            <div class="sr-app-header">
+                                <span class="sr-app-brand">SafeRide</span>
+                                <span class="sr-app-badge">ESP-MOTOR</span>
+                            </div>
+
+                            <!-- Screen 1: Splash / Login -->
+                            <div class="sr-screen sr-splash" id="sc-splash">
+                                <div class="sr-pin"><span>&#9650;</span></div>
+                                <div class="sr-logo">SafeRide</div>
+                                <p class="sr-sub">Alcohol check, helmet detection and crash alerts on every ride.</p>
+                                <button type="button" class="sr-btn-black sr-btn" data-go="sc-phone">&#9742; Continue with phone</button>
+                                <button type="button" class="sr-btn-white sr-btn" data-go="sc-google">G Continue with Google</button>
+                            </div>
+
+                            <!-- Screen 2: Mobile Number Register (11 digits max) -->
+                            <div class="sr-screen" id="sc-phone">
+                                <div style="text-align:center; padding: 0.6rem 0;">
+                                    <p style="font-size:0.65rem; font-weight:700; color:#111827; margin-bottom:0.2rem;">Mobile Sign In</p>
+                                    <p style="font-size:0.58rem; color:#6b7280; margin-bottom:0.65rem;">Enter your 11-digit mobile number</p>
+                                    <div class="sr-phone-row">
+                                        <span>PH</span>
+                                        <input type="tel" id="sr-mob" maxlength="11" inputmode="numeric" placeholder="09XXXXXXXXX" value="09665609979" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)">
+                                    </div>
+                                    <button type="button" class="sr-btn-black sr-btn" style="margin-top:0.65rem;" data-action="verify-phone">Send Code</button>
+                                    <button type="button" class="sr-btn-white sr-btn" data-go="sc-splash">Back</button>
+                                </div>
+                            </div>
+                            <!-- Screen 3: SMS OTP Verification -->
+                            <div class="sr-screen" id="sc-otp">
+                                <div class="sr-sms-banner"><strong>Messages &bull; SAFERIDEAPP &bull; now</strong><br>Your SafeRide verification code is <strong>805794</strong>. It expires in 5 minutes.</div>
+                                <div style="text-align:center;">
+                                    <p style="font-size:0.6rem; color:#6b7280;">Enter the code sent to <strong id="otp-num-lbl">09665609979</strong></p>
+                                    <div class="sr-otp-row">
+                                        <input class="sr-otp-box" maxlength="1" value="8">
+                                        <input class="sr-otp-box" maxlength="1" value="0">
+                                        <input class="sr-otp-box" maxlength="1" value="5">
+                                        <input class="sr-otp-box" maxlength="1" value="7">
+                                        <input class="sr-otp-box" maxlength="1" value="9">
+                                        <input class="sr-otp-box" maxlength="1" value="4">
+                                    </div>
+                                    <button type="button" class="sr-btn-black sr-btn" data-go="sc-reg">Verify</button>
+                                </div>
+                            </div>
+
+                            <!-- Screen 4: Google Account Picker -->
+                            <div class="sr-screen" id="sc-google">
+                                <div style="background:#374151; color:#fff; border-radius:14px; padding:0.65rem;">
+                                    <p style="font-size:0.72rem; font-weight:700; text-align:center;">Choose an account</p>
+                                    <p style="font-size:0.56rem; color:#d1d5db; text-align:center; margin-bottom:0.5rem;">to continue to SafeRide</p>
+                                    <button type="button" class="sr-google-item sr-btn" data-google-fn="Trixie" data-google-ln="Gaspar">
+                                        <span class="sr-avatar">T</span>
+                                        <div><strong style="font-size:0.62rem; color:#111827; display:block;">Trixie Gaspar</strong><span style="font-size:0.54rem; color:#6b7280;">iamtrixieg@gmail.com</span></div>
+                                    </button>
+                                    <button type="button" class="sr-google-item sr-btn" data-google-fn="Kenjin Rey" data-google-ln="Cordero">
+                                        <span class="sr-avatar" style="background:#2563eb;">K</span>
+                                        <div><strong style="font-size:0.62rem; color:#111827; display:block;">Kenjin Rey Cordero</strong><span style="font-size:0.54rem; color:#6b7280;">kenjinreycordero31@gmail.com</span></div>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Screen 5: User Registration -->
+                            <div class="sr-screen" id="sc-reg">
+                                <div style="font-size:0.74rem; font-weight:800; text-align:center; margin-bottom:0.35rem;">User Registration</div>
+                                <div class="sr-field"><label>First Name</label><input type="text" id="reg-fn" class="sr-input" value="Trixie"></div>
+                                <div class="sr-field"><label>Last Name</label><input type="text" id="reg-ln" class="sr-input" value="Gaspar"></div>
+                                <div style="font-size:0.6rem; font-weight:700; text-align:center; color:#4b5563; margin:0.25rem 0;">Emergency Contact Information</div>
+                                <div class="sr-field"><label>First Name</label><input type="text" id="sos-fn" class="sr-input" value="Maria"></div>
+                                <div class="sr-field"><label>Last Name</label><input type="text" id="sos-ln" class="sr-input" value="Gaspar"></div>
+                                <div class="sr-field"><label>Mobile Number (11 digits)</label><input type="tel" id="sos-mob" maxlength="11" inputmode="numeric" class="sr-input" value="09366185780" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)"></div>
+                                <button type="button" class="sr-btn-blue sr-btn" data-action="confirm-reg">Confirm</button>
+                            </div>
+                            <!-- Screens 6-20: Home Dashboard & Ride Check (NO History here!) -->
+                            <div class="sr-screen active" id="sc-home">
+                                <div id="sms-top-alert" style="display:none; background:#fee2e2; color:#b91c1c; border-radius:8px; padding:0.24rem 0.45rem; font-size:0.56rem; font-weight:700; margin-bottom:0.28rem;">&#9888; SMS sent at 3:56:46 PM</div>
+                                <div class="sr-sec-title"><span>Real-time Location</span><span style="font-size:0.55rem; color:#2563eb;">GPS Active</span></div>
+                                <div class="sr-map-card">
+                                    <span>A. O. Pascual Street &bull; Ramos Street Extension</span>
+                                    <span class="sr-map-pin">&#128205;</span>
+                                </div>
+
+                                <div class="sr-sec-title"><span>Safety Dashboard</span></div>
+                                <div class="sr-dash-grid">
+                                    <div class="sr-card">
+                                        <strong style="font-size:0.6rem; display:block;">&#129656; Alcohol Test</strong>
+                                        <span id="dash-alc-txt" style="font-size:0.55rem; color:#4b5563;">No alcohol detected</span>
+                                    </div>
+                                    <div class="sr-card">
+                                        <strong style="font-size:0.6rem; display:block;">&#128101; Tandem</strong>
+                                        <div class="sr-pill-row">
+                                            <span class="sr-tag-green" id="pill-drv">Driver</span>
+                                            <span class="sr-tag-gray" id="pill-pas">Passenger</span>
+                                        </div>
+                                        <span id="dash-tan-txt" style="font-size:0.54rem; color:#4b5563;">No passenger</span>
+                                    </div>
+                                </div>
+
+                                <div class="sr-sec-title"><span>Ride Check</span></div>
+                                <div class="sr-card" id="ride-check-box">
+                                    <div class="sr-lock-green" id="ride-banner"><strong>&#10004; Ready to ride</strong><br>Ignition unlocked.</div>
+                                    <div class="sr-chk"><span class="sr-dot-ok">&#10004;</span> Driver helmet found</div>
+                                    <div class="sr-chk"><span class="sr-dot-ok">&#10004;</span> Driver helmet worn</div>
+                                    <div class="sr-chk" id="chk-breath"><span class="sr-dot-ok">&#10004;</span> Breath test passed</div>
+                                    <div class="sr-chk" id="chk-pos"><span class="sr-dot-ok">&#10004;</span> Driver on the motorcycle</div>
+                                    <div class="sr-chk" id="chk-swap" style="display:none;"><span class="sr-dot-ok">&#10004;</span> Helmets not swapped</div>
+                                </div>
+
+                                <div id="crash-sms-card" style="display:none; background:#18181b; color:#f4f4f5; border-radius:10px; padding:0.42rem 0.5rem; margin-top:0.35rem; font-size:0.55rem; line-height:1.35;">
+                                    <strong>SAFERIDEAPP &bull; CRASH ALERT</strong><br>
+                                    Rider: <span id="sms-rider">Trixie Gaspar</span> | SOS: <span id="sms-sos">09366185780</span><br>
+                                    <span style="color:#60a5fa;">https://google.com</span>
+                                </div>
+
+                                <div class="sr-sec-title"><span>Connected Motorcycle</span><button type="button" data-action="scan-bike" style="border:none; background:none; color:#2563eb; font-size:0.55rem; font-weight:700; cursor:pointer;">&#8635; Scan</button></div>
+                                <div class="sr-card" style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span style="font-size:0.58rem; font-weight:700; color:#2563eb;" id="bike-conn-txt">&#9679; Motorcycle Connected</span>
+                                    <span style="background:#f3f4f6; padding:2px 6px; border-radius:6px; font-size:0.55rem; font-weight:700;">ESP-MOTOR</span>
+                                </div>
+                            </div>
+                            <!-- Screens 21-22: History Tab (Strictly separated on History page!) -->
+                            <div class="sr-screen" id="sc-history">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <strong style="font-size:0.85rem;">History</strong>
+                                    <span style="background:#f3f4f6; border-radius:50%; width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; font-size:0.65rem;">&#8635;</span>
+                                </div>
+                                <p id="hist-sub" style="font-size:0.55rem; color:#6b7280; margin-bottom:0.35rem;">6 alcohol tests</p>
+                                <div class="sr-tabs">
+                                    <button type="button" class="sr-tab active" id="htab-alc" data-hist="alc">Alcohol</button>
+                                    <button type="button" class="sr-tab" id="htab-acc" data-hist="acc">Accidents</button>
+                                </div>
+                                <div style="display:flex; gap:0.3rem; margin-bottom:0.38rem;">
+                                    <span style="background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:2px 7px; font-size:0.52rem; font-weight:700;">All months &#9662;</span>
+                                    <span style="background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:2px 7px; font-size:0.52rem; font-weight:700;">&#8595; Newest first</span>
+                                </div>
+                                <div id="hist-list-alc">
+                                    <div class="sr-hist-item"><div><strong>No alcohol detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 4:06 PM</span></div><span class="sr-tag-green">Sober</span></div>
+                                    <div class="sr-hist-item"><div><strong>No alcohol detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 3:59 PM</span></div><span class="sr-tag-green">Sober</span></div>
+                                    <div class="sr-hist-item"><div><strong>Alcohol detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 3:55 PM</span></div><span style="background:#fee2e2; color:#b91c1c; padding:1px 5px; border-radius:5px; font-size:0.52rem; font-weight:700;">Unsafe</span></div>
+                                    <div class="sr-hist-item"><div><strong>Alcohol detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 3:52 PM</span></div><span style="background:#fee2e2; color:#b91c1c; padding:1px 5px; border-radius:5px; font-size:0.52rem; font-weight:700;">Unsafe</span></div>
+                                    <div class="sr-hist-item"><div><strong>No alcohol detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 3:46 PM</span></div><span class="sr-tag-green">Sober</span></div>
+                                    <div class="sr-hist-item"><div><strong>Alcohol detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 3:44 PM</span></div><span style="background:#fee2e2; color:#b91c1c; padding:1px 5px; border-radius:5px; font-size:0.52rem; font-weight:700;">Unsafe</span></div>
+                                </div>
+                                <div id="hist-list-acc" style="display:none;">
+                                    <div class="sr-hist-item"><div><strong>Accident detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 3:57 PM &bull; Passenger: No</span></div><button type="button" class="sr-btn" data-go="sc-home" style="background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; padding:2px 6px; font-size:0.54rem; font-weight:700;">Map</button></div>
+                                    <div class="sr-hist-item"><div><strong>Accident detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 3:57 PM &bull; Passenger: No</span></div><button type="button" class="sr-btn" data-go="sc-home" style="background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; padding:2px 6px; font-size:0.54rem; font-weight:700;">Map</button></div>
+                                    <div class="sr-hist-item"><div><strong>Accident detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 3:57 PM &bull; Passenger: No</span></div><button type="button" class="sr-btn" data-go="sc-home" style="background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; padding:2px 6px; font-size:0.54rem; font-weight:700;">Map</button></div>
+                                    <div class="sr-hist-item"><div><strong>Accident detected</strong><br><span style="color:#6b7280; font-size:0.52rem;">Oct 15, 2026 &bull; 3:55 PM &bull; Passenger: No</span></div><button type="button" class="sr-btn" data-go="sc-home" style="background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; border-radius:6px; padding:2px 6px; font-size:0.54rem; font-weight:700;">Map</button></div>
+                                </div>
+                            </div>
+                            <!-- Screens 23-26: Profile Tab (Strictly separated on Profile page!) -->
+                            <div class="sr-screen" id="sc-profile">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+                                    <strong style="font-size:0.74rem;">Personal Information</strong>
+                                    <button type="button" id="btn-edit-prof" class="sr-btn" data-action="edit-open" style="background:#e5e7eb; border:none; border-radius:8px; padding:2px 8px; font-size:0.56rem; font-weight:700;">Edit Profile</button>
+                                </div>
+
+                                <div id="prof-view-mode">
+                                    <div class="sr-card" style="margin-bottom:0.4rem; font-size:0.58rem; line-height:1.45;">
+                                        <span style="color:#6b7280; font-size:0.5rem;">FIRST NAME</span><br><strong id="pv-fn">Trixie</strong><br>
+                                        <span style="color:#6b7280; font-size:0.5rem;">LAST NAME</span><br><strong id="pv-ln">Gaspar</strong><br>
+                                        <span style="color:#6b7280; font-size:0.5rem;">PHONE NUMBER</span><br><strong id="pv-phone">09366185780</strong>
+                                    </div>
+                                    <strong style="font-size:0.74rem; display:block; margin-bottom:0.25rem;">Emergency Contact</strong>
+                                    <div class="sr-card" style="margin-bottom:0.42rem; font-size:0.58rem; line-height:1.45;">
+                                        <span style="color:#6b7280; font-size:0.5rem;">FIRST NAME</span><br><strong id="pv-sfn">Maria</strong><br>
+                                        <span style="color:#6b7280; font-size:0.5rem;">LAST NAME</span><br><strong id="pv-sln">Gaspar</strong><br>
+                                        <span style="color:#6b7280; font-size:0.5rem;">MOBILE NUMBER (11 DIGITS)</span><br><strong id="pv-sos-mob">09366185780</strong>
+                                    </div>
+                                    <button type="button" class="sr-btn-blue sr-btn" data-go="sc-splash">Log Out</button>
+                                    <button type="button" class="sr-btn-red sr-btn" data-action="del-open">Delete Account</button>
+                                </div>
+                                <div id="prof-edit-mode" style="display:none;">
+                                    <div class="sr-field"><label>First Name</label><input type="text" id="ed-fn" class="sr-input" value="Trixie"></div>
+                                    <div class="sr-field"><label>Last Name</label><input type="text" id="ed-ln" class="sr-input" value="Gaspar"></div>
+                                    <div class="sr-field"><label>Emergency First Name</label><input type="text" id="ed-sfn" class="sr-input" value="Maria"></div>
+                                    <div class="sr-field"><label>Emergency Last Name</label><input type="text" id="ed-sln" class="sr-input" value="Gaspar"></div>
+                                    <div class="sr-field"><label>Emergency Mobile (11 digits)</label><input type="tel" id="ed-smob" maxlength="11" inputmode="numeric" class="sr-input" value="09366185780" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)"></div>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.35rem;">
+                                        <button type="button" class="sr-btn-white sr-btn" data-action="edit-cancel">Cancel</button>
+                                        <button type="button" class="sr-btn-blue sr-btn" style="margin-top:0;" data-action="edit-save">Save</button>
+                                    </div>
+                                </div>
+
+                                <div id="ok-modal" class="sr-modal-overlay" style="display:none; margin-top:0.4rem;">
+                                    <div class="sr-modal-box">
+                                        <strong style="font-size:0.72rem; display:block;">Success</strong>
+                                        <p style="font-size:0.58rem; color:#4b5563; margin:0.2rem 0 0.4rem;">Profile updated successfully!</p>
+                                        <button type="button" class="sr-btn-blue sr-btn" data-action="ok-close">OK</button>
+                                    </div>
+                                </div>
+
+                                <div id="del-modal" class="sr-modal-overlay" style="display:none; margin-top:0.4rem;">
+                                    <div class="sr-modal-box">
+                                        <strong style="font-size:0.72rem; display:block;">Delete Account</strong>
+                                        <p style="font-size:0.55rem; color:#4b5563; margin:0.2rem 0 0.45rem;">Are you sure you want to permanently delete your account and all associated data? This action cannot be undone.</p>
+                                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.3rem;">
+                                            <button type="button" class="sr-btn-white sr-btn" data-action="del-cancel">CANCEL</button>
+                                            <button type="button" class="sr-btn-red sr-btn" style="margin-top:0;" data-action="del-confirm">DELETE</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="sr-bottom-nav">
+                            <button type="button" class="sr-nav-btn" id="bnav-hist" data-go="sc-history">&#128214;<br>History</button>
+                            <button type="button" class="sr-nav-btn active" id="bnav-home" data-go="sc-home">&#8962;<br>Home</button>
+                            <button type="button" class="sr-nav-btn" id="bnav-prof" data-go="sc-profile">&#128100;<br>Profile</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="sim-caption">
+                    <span class="st-safe">[READY TO RIDE] Driver helmet worn &amp; breath test passed &rarr; Ignition unlocked ("All Clear").</span>
+                    <span class="st-alc">[ALCOHOL DETECTED] Under influence of alcohol &rarr; Ignition stays locked &amp; logged in History.</span>
+                    <span class="st-pass">[WITH PASSENGER] Tandem mode verified Driver &amp; Passenger helmets not swapped &rarr; Safe to ride.</span>
+                    <span class="st-swap">[HELMETS SWAPPED] Passenger helmet detected in driver zone &rarr; Ignition locked to prevent bypass.</span>
+                    <span class="st-pos">[OUT OF POSITION] Driver too far from motorcycle &rarr; Warning: Engine cuts off in 9s.</span>
+                    <span class="st-crash">[ACCIDENT SMS ALERT] Collision detected &rarr; Automated SAFERIDEAPP SMS with Google Maps link sent.</span>
+                </div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-box">
+                    <h4>Hardware &amp; Sensors</h4>
+                    <ul>
+                        <li><strong>Helmet Unit:</strong> Xiao ESP32-C6, MQ-3 alcohol breathalyzer, TPS63020 5V booster, FSR/IR wear sensors, 3.7V battery, and DW3000 short-range proximity tag.</li>
+                        <li><strong>Motorcycle Unit:</strong> ESP32 controller, LM2596S buck converter, MPU6050 6-axis crash sensor, and SPDT ignition interlock relay.</li>
+                    </ul>
+                </div>
+                <div class="detail-box">
+                    <h4>SafeRide Mobile Application</h4>
+                    <ul>
+                        <li>Features Phone OTP &amp; Google Sign-In, User &amp; Emergency Contact Registration, live GPS tracking, and real-time Ride Check status.</li>
+                        <li>Supports Tandem helmet swap detection, Alcohol &amp; Accident History logs, and automated Semaphore SMS crash alerts.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pill-row">
+                <span class="pill">System Analysis</span>
+                <span class="pill">SafeRide UI/UX</span>
+                <span class="pill">ESP32 &amp; IoT Sensors</span>
+                <span class="pill">DW3000 UWB Positioning</span>
+                <span class="pill">Semaphore SMS API</span>
+            </div>
+        </div>
+    </section>
+    <section id="contact">
+        <div class="section-header"><span class="section-dot"></span><h2>Contact Information</h2></div>
+        <div class="contact-panel">
+            <p>Feel free to reach out for internships, entry-level roles, or project collaborations.</p>
+            <div class="contact-list">
+                <a href="mailto:iamtrixieg@gmail.com" class="c-link-card">
+                    <label><span class="c-icon">&#9993;</span> Email Address</label>
+                    <span class="c-link-val">iamtrixieg@gmail.com</span>
+                </a>
+                <a href="tel:09366185780" class="c-link-card">
+                    <label><span class="c-icon">&#9742;</span> Phone Number</label>
+                    <span class="c-link-val">0936 618 5780</span>
+                </a>
+                <div class="c-box"><label>Current Address</label><p>San Jose City, Nueva Ecija</p></div>
+                <div class="c-box"><label>Permanent Address</label><p>Pantabangan, Nueva Ecija</p></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<footer>&copy; 2026 Trixie Gaspar. All rights reserved.</footer>
+<script>
+function goScreen(id) {
+    document.querySelectorAll('.sr-screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) target.classList.add('active');
+    document.querySelectorAll('.sr-nav-btn').forEach(b => b.classList.remove('active'));
+    if (id === 'sc-history') document.getElementById('bnav-hist').classList.add('active');
+    if (id === 'sc-home') document.getElementById('bnav-home').classList.add('active');
+    if (id === 'sc-profile') document.getElementById('bnav-prof').classList.add('active');
+}
+
+function setAppScenario(mode) {
+    goScreen('sc-home');
+    const banner = document.getElementById('ride-banner');
+    const alcTxt = document.getElementById('dash-alc-txt');
+    const tanTxt = document.getElementById('dash-tan-txt');
+    const pillPas = document.getElementById('pill-pas');
+    const chkBreath = document.getElementById('chk-breath');
+    const chkPos = document.getElementById('chk-pos');
+    const chkSwap = document.getElementById('chk-swap');
+    const smsTop = document.getElementById('sms-top-alert');
+    const smsCard = document.getElementById('crash-sms-card');
+
+    smsTop.style.display = 'none';
+    smsCard.style.display = 'none';
+    chkSwap.style.display = 'none';
+    pillPas.className = 'sr-tag-gray';
+    tanTxt.textContent = 'No passenger';
+    alcTxt.textContent = 'No alcohol detected';
+    chkBreath.innerHTML = '<span class="sr-dot-ok">&#10004;</span> Breath test passed';
+    chkPos.innerHTML = '<span class="sr-dot-ok">&#10004;</span> Driver on the motorcycle';
+
+    if (mode === 'safe') {
+        banner.className = 'sr-lock-green';
+        banner.innerHTML = '<strong>&#10004; Ready to ride</strong><br>Ignition unlocked.';
+    } else if (mode === 'alc') {
+        banner.className = 'sr-lock-red';
+        banner.innerHTML = '<strong>&#128274; Ignition locked</strong><br>Alcohol detected. The ignition stays locked.';
+        alcTxt.textContent = 'Under influence of alcohol';
+        chkBreath.innerHTML = '<span class="sr-dot-no">&#10006;</span> Breath test failed';
+    }
+    else if (mode === 'pass') {
+        banner.className = 'sr-lock-green';
+        banner.innerHTML = '<strong>&#10004; Ready to ride (Tandem)</strong><br>Passenger helmet worn &bull; Helmets not swapped.';
+        pillPas.className = 'sr-tag-green';
+        tanTxt.textContent = 'With passenger';
+        chkSwap.style.display = 'flex';
+    } else if (mode === 'swap') {
+        banner.className = 'sr-lock-red';
+        banner.innerHTML = '<strong>&#128274; Ignition locked</strong><br>Helmets swapped! Passenger cannot start bike.';
+        pillPas.className = 'sr-tag-orange';
+        tanTxt.textContent = 'With passenger';
+        chkPos.innerHTML = '<span class="sr-dot-no">&#10006;</span> Driver helmet out of range';
+    } else if (mode === 'pos') {
+        banner.className = 'sr-lock-amber';
+        banner.innerHTML = '<strong>&#9888; Engine cuts off in 9s</strong><br>The driver is out of position.';
+        chkPos.innerHTML = '<span class="sr-dot-no">&#10006;</span> Driver too far from motorcycle';
+    } else if (mode === 'crash') {
+        banner.className = 'sr-lock-red';
+        banner.innerHTML = '<strong>&#9888; Crash Detected!</strong><br>Automated SMS sent to emergency contact.';
+        smsTop.style.display = 'block';
+        smsCard.style.display = 'block';
+    }
+}
+document.addEventListener('click', function (e) {
+    const scen = e.target.closest('[data-scenario]');
+    if (scen) { setAppScenario(scen.getAttribute('data-scenario')); return; }
+
+    const go = e.target.closest('[data-go]');
+    if (go) { goScreen(go.getAttribute('data-go')); return; }
+
+    const gbtn = e.target.closest('[data-google-fn]');
+    if (gbtn) {
+        document.getElementById('reg-fn').value = gbtn.getAttribute('data-google-fn');
+        document.getElementById('reg-ln').value = gbtn.getAttribute('data-google-ln');
+        goScreen('sc-reg');
+        return;
+    }
+
+    const hist = e.target.closest('[data-hist]');
+    if (hist) {
+        const tab = hist.getAttribute('data-hist');
+        document.getElementById('htab-alc').classList.toggle('active', tab === 'alc');
+        document.getElementById('htab-acc').classList.toggle('active', tab === 'acc');
+        document.getElementById('hist-list-alc').style.display = tab === 'alc' ? 'block' : 'none';
+        document.getElementById('hist-list-acc').style.display = tab === 'acc' ? 'block' : 'none';
+        document.getElementById('hist-sub').textContent = tab === 'alc' ? '6 alcohol tests' : '4 accidents';
+        return;
+    }
+
+    const actBtn = e.target.closest('[data-action]');
+    if (!actBtn) return;
+    const act = actBtn.getAttribute('data-action');
+
+    if (act === 'verify-phone') {
+        const val = document.getElementById('sr-mob').value.replace(/[^0-9]/g, '');
+        if (val.length !== 11) { alert('Please enter exactly 11 digits for the mobile number.'); return; }
+        document.getElementById('otp-num-lbl').textContent = val;
+        document.getElementById('pv-phone').textContent = val;
+        goScreen('sc-otp');
+    } else if (act === 'confirm-reg') {
+        const smob = document.getElementById('sos-mob').value.replace(/[^0-9]/g, '');
+        if (smob.length !== 11) { alert('Emergency contact mobile number must be exactly 11 digits.'); return; }
+        const fn = document.getElementById('reg-fn').value || 'Trixie';
+        const ln = document.getElementById('reg-ln').value || 'Gaspar';
+        const sfn = document.getElementById('sos-fn').value || 'Maria';
+        const sln = document.getElementById('sos-ln').value || 'Gaspar';
+        document.getElementById('pv-fn').textContent = fn;
+        document.getElementById('pv-ln').textContent = ln;
+        document.getElementById('pv-sfn').textContent = sfn;
+        document.getElementById('pv-sln').textContent = sln;
+        document.getElementById('pv-sos-mob').textContent = smob;
+        document.getElementById('sms-rider').textContent = fn + ' ' + ln;
+        document.getElementById('sms-sos').textContent = smob;
+        goScreen('sc-home');
+    }
+    else if (act === 'scan-bike') {
+        const el = document.getElementById('bike-conn-txt');
+        el.textContent = 'Scanning... (attempt 1)';
+        setTimeout(() => { el.innerHTML = '&#9679; Motorcycle Connected'; }, 800);
+    } else if (act === 'edit-open') {
+        document.getElementById('prof-view-mode').style.display = 'none';
+        document.getElementById('prof-edit-mode').style.display = 'block';
+    } else if (act === 'edit-cancel') {
+        document.getElementById('prof-view-mode').style.display = 'block';
+        document.getElementById('prof-edit-mode').style.display = 'none';
+    } else if (act === 'edit-save') {
+        const smob = document.getElementById('ed-smob').value.replace(/[^0-9]/g, '');
+        if (smob.length !== 11) { alert('Emergency mobile number must be exactly 11 digits.'); return; }
+        const fn = document.getElementById('ed-fn').value || 'Trixie';
+        const ln = document.getElementById('ed-ln').value || 'Gaspar';
+        const sfn = document.getElementById('ed-sfn').value || 'Maria';
+        const sln = document.getElementById('ed-sln').value || 'Gaspar';
+        document.getElementById('pv-fn').textContent = fn;
+        document.getElementById('pv-ln').textContent = ln;
+        document.getElementById('pv-sfn').textContent = sfn;
+        document.getElementById('pv-sln').textContent = sln;
+        document.getElementById('pv-sos-mob').textContent = smob;
+        document.getElementById('sms-rider').textContent = fn + ' ' + ln;
+        document.getElementById('sms-sos').textContent = smob;
+        document.getElementById('prof-view-mode').style.display = 'block';
+        document.getElementById('prof-edit-mode').style.display = 'none';
+        document.getElementById('ok-modal').style.display = 'block';
+    } else if (act === 'ok-close') {
+        document.getElementById('ok-modal').style.display = 'none';
+    } else if (act === 'del-open') {
+        document.getElementById('del-modal').style.display = 'block';
+    } else if (act === 'del-cancel') {
+        document.getElementById('del-modal').style.display = 'none';
+    } else if (act === 'del-confirm') {
+        document.getElementById('del-modal').style.display = 'none';
+        goScreen('sc-splash');
+    }
+});
+</script>
+</body>
+</html>
