@@ -628,6 +628,135 @@ html, body {
     .sr-phone { max-width: 265px !important; height: 480px !important; margin: 0 auto !important; }
 }
 </style>
+<style>
+@media screen and (max-width: 780px) {
+    html, body {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+    }
+
+    /* 1. Clean single-row mobile header */
+    nav {
+        width: 100% !important;
+        padding: 0.75rem 4% !important;
+        gap: 0.5rem !important;
+    }
+    .brand {
+        font-size: 1.05rem !important;
+        white-space: nowrap !important;
+    }
+    .nav-links {
+        display: none !important;
+    }
+    .mode-toggle {
+        white-space: nowrap !important;
+        padding: 0.35rem 0.9rem !important;
+        border-radius: 50px !important;
+    }
+
+    /* 2. Stack Hero Polaroid on top and Bio underneath inside the card */
+    .wrap {
+        width: 92% !important;
+        margin: 1.1rem auto !important;
+    }
+    .hero {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        padding: 1.5rem 1.1rem !important;
+        gap: 1.3rem !important;
+        width: 100% !important;
+    }
+    .hero > div {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .polaroid-wrap {
+        width: 190px !important;
+        margin: 0 auto !important;
+    }
+    .photo-box {
+        height: 180px !important;
+    }
+    .script-greeting {
+        font-size: 2.5rem !important;
+        text-align: center !important;
+    }
+    .mono-bio {
+        font-size: 0.82rem !important;
+        line-height: 1.68 !important;
+        text-align: justify !important;
+        text-justify: inter-word !important;
+        width: 100% !important;
+    }
+    .btn-touch {
+        display: inline-block !important;
+        margin: 0 auto !important;
+    }
+
+    /* 3. Stack all 2-column grids cleanly */
+    .skills-bento,
+    .sim-grid,
+    .detail-grid,
+    .contact-list {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        width: 100% !important;
+    }
+
+    /* 4. Fit Project Card & Scale Entire Motorcycle Inside Stage */
+    .project-card,
+    .contact-panel {
+        padding: 1.2rem 0.95rem !important;
+        width: 100% !important;
+    }
+    .sim-box {
+        padding: 0.85rem 0.65rem !important;
+        width: 100% !important;
+    }
+    .moto-3d-card {
+        padding: 0.7rem !important;
+        width: 100% !important;
+        overflow: hidden !important;
+    }
+    .css-stage {
+        height: 185px !important;
+        width: 100% !important;
+        overflow: hidden !important;
+    }
+    .rider-rig {
+        transform: scale(0.72) !important;
+        transform-origin: bottom left !important;
+        width: 138% !important;
+    }
+
+    /* 5. Center SafeRide Phone & Keep Scrollable */
+    .sr-phone {
+        width: 100% !important;
+        max-width: 280px !important;
+        margin: 0 auto !important;
+    }
+    .sim-caption {
+        width: 100% !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+/* Extra-small phones (380px and below) */
+@media screen and (max-width: 380px) {
+    .rider-rig {
+        transform: scale(0.62) !important;
+        width: 158% !important;
+    }
+    .sr-phone {
+        max-width: 260px !important;
+    }
+}
+</style>
+</head>
+
 </head>
 
 </head>
