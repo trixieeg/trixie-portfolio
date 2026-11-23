@@ -279,9 +279,14 @@ self: center;
 .c-link-card:active .c-link-val { color: var(--yellow-ink); }
 
 footer { text-align: center; padding: 1.75rem; font-size: 0.85rem; color: var(--muted); }
-@media (max-width: 780px) {
-    .sim-grid, .detail-grid, .skills-bento, .contact-list { grid-template-columns: 1fr; }
-    .moto-3d-card {
+/* === COMPLETE RESPONSIVE & LAYOUT FIXES FOR ALL DEVICES === */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* Keep motorcycle card flat (no 3D tilt) with subtle hover lift */
+.moto-3d-card {
     background: var(--card);
     border: 2px solid var(--pink-border);
     border-radius: 20px;
@@ -297,6 +302,180 @@ footer { text-align: center; padding: 1.75rem; font-size: 0.85rem; color: var(--
     border-color: var(--pink);
     box-shadow: 0 10px 22px rgba(236, 72, 153, 0.14);
 }
+
+/* Fixed phone height & scrollable inner screens */
+.sr-phone {
+    position: relative;
+    z-index: 30;
+    pointer-events: auto;
+    width: 100%;
+    max-width: 285px;
+    height: 510px;
+    justify-self: center;
+    align-self: center;
+    background: #f8fafc;
+    color: #111827;
+    border: 2px solid #1e293b;
+    border-radius: 26px;
+    padding: 0.65rem;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+.sr-phone button, .sr-phone input { pointer-events: auto; position: relative; z-index: 35; }
+.sr-phone-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+.sr-notch { width: 54px; height: 5px; background: #cbd5e1; border-radius: 10px; margin: 0 auto 0.35rem; flex-shrink: 0; }
+.sr-app-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.3rem; margin-bottom: 0.35rem; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
+.sr-screen { display: none !important; animation: screenPop 0.2s ease; }
+.sr-screen.active {
+    display: block !important;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+.sr-screen.active::-webkit-scrollbar { width: 4px; }
+.sr-screen.active::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+/* Tablets & Mobile Phones (780px and below) */
+@media (max-width: 780px) {
+    .wrap {
+        width: 94%;
+        margin: 1.2rem auto;
+    }
+    nav {
+        padding: 0.75rem 4%;
+    }
+    .brand {
+        font-size: 1rem;
+    }
+    .nav-links {
+        display: none;
+    }
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem 1.2rem;
+        gap: 1.4rem;
+        border-radius: 24px;
+    }
+    .polaroid-wrap {
+        width: 195px;
+        margin: 0 auto;
+    }
+    .photo-box {
+        height: 185px;
+    }
+    .script-greeting {
+        font-size: 2.6rem;
+    }
+    .mono-bio {
+        text-align: justify;
+        text-justify: inter-word;
+        font-size: 0.82rem;
+        line-height: 1.68;
+    }
+    .sim-grid,
+    .detail-grid,
+    .skills-bento,
+    .contact-list {
+        grid-template-columns: 1fr;
+    }
+    .project-card,
+    .contact-panel {
+        padding: 1.25rem 1rem;
+        border-radius: 20px;
+    }
+    .sim-box {
+        padding: 0.9rem 0.75rem;
+        border-radius: 18px;
+    }
+    .project-top h3 {
+        font-size: 1.05rem;
+    }
+    .moto-3d-card {
+        padding: 0.75rem;
+        overflow: hidden;
+    }
+    .css-stage {
+        height: 195px;
+    }
+    .rider-rig {
+        transform: scale(0.76);
+        transform-origin: bottom left;
+        width: 130%;
+    }
+    .sr-phone {
+        max-width: 280px;
+        height: 490px;
+        margin: 0 auto;
+    }
+    .c-link-val,
+    .c-box p {
+        font-size: 0.88rem;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+}
+
+/* Extra-small phones (400px and below) */
+@media (max-width: 400px) {
+    .rider-rig {
+        transform: scale(0.66);
+        width: 148%;
+    }
+    .sim-lbl {
+        font-size: 0.68rem;
+        padding: 0.28rem 0.6rem;
+    }
+}
+/* GUARANTEED SCROLLABLE PHONE SCREEN (LAPTOP + MOBILE TOUCH) */
+.sr-phone {
+    height: 500px !important;
+    max-height: 500px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+}
+.sr-phone-body {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+.sr-screen.active {
+    display: block !important;
+    height: 390px !important;
+    max-height: 390px !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+    overscroll-behavior: contain !important;
+    padding-right: 4px !important;
+    padding-bottom: 12px !important;
+}
+.sr-screen.active::-webkit-scrollbar {
+    width: 5px;
+}
+.sr-screen.active::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+.sr-screen.active::-webkit-scrollbar-thumb {
+    background: #94a3b8;
+    border-radius: 10px;
+}
+
 </style>
 </head>
 <body>
@@ -443,7 +622,7 @@ footer { text-align: center; padding: 1.75rem; font-size: 0.85rem; color: var(--
                                     <p style="font-size:0.58rem; color:#6b7280; margin-bottom:0.65rem;">Enter your 11-digit mobile number</p>
                                     <div class="sr-phone-row">
                                         <span>PH</span>
-                                        <input type="tel" id="sr-mob" maxlength="11" inputmode="numeric" placeholder="09XXXXXXXXX" value="09665609979" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)">
+                                        <input type="tel" id="sr-mob" maxlength="11" inputmode="numeric" placeholder="09XXXXXXXXX" value="09876543210" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)">
                                     </div>
                                     <button type="button" class="sr-btn-black sr-btn" style="margin-top:0.65rem;" data-action="verify-phone">Send Code</button>
                                     <button type="button" class="sr-btn-white sr-btn" data-go="sc-splash">Back</button>
@@ -475,9 +654,9 @@ footer { text-align: center; padding: 1.75rem; font-size: 0.85rem; color: var(--
                                         <span class="sr-avatar">T</span>
                                         <div><strong style="font-size:0.62rem; color:#111827; display:block;">Trixie Gaspar</strong><span style="font-size:0.54rem; color:#6b7280;">iamtrixieg@gmail.com</span></div>
                                     </button>
-                                    <button type="button" class="sr-google-item sr-btn" data-google-fn="Kenjin Rey" data-google-ln="Cordero">
-                                        <span class="sr-avatar" style="background:#2563eb;">K</span>
-                                        <div><strong style="font-size:0.62rem; color:#111827; display:block;">Kenjin Rey Cordero</strong><span style="font-size:0.54rem; color:#6b7280;">kenjinreycordero31@gmail.com</span></div>
+                                    <button type="button" class="sr-google-item sr-btn" data-google-fn="Trixie" data-google-ln="Ortiz">
+                                        <span class="sr-avatar" style="background:#2563eb;">T</span>
+                                        <div><strong style="font-size:0.62rem; color:#111827; display:block;" Trixie Ortiz</strong><span style="font-size:0.54rem; color:#6b7280;">trixieortiz@gmail.com</span></div>
                                     </button>
                                 </div>
                             </div>
@@ -487,7 +666,7 @@ footer { text-align: center; padding: 1.75rem; font-size: 0.85rem; color: var(--
                                 <div class="sr-field"><label>First Name</label><input type="text" id="reg-fn" class="sr-input" value="Trixie"></div>
                                 <div class="sr-field"><label>Last Name</label><input type="text" id="reg-ln" class="sr-input" value="Gaspar"></div>
                                 <div style="font-size:0.6rem; font-weight:700; text-align:center; color:#4b5563; margin:0.25rem 0;">Emergency Contact Information</div>
-                                <div class="sr-field"><label>First Name</label><input type="text" id="sos-fn" class="sr-input" value="Maria"></div>
+                                <div class="sr-field"><label>First Name</label><input type="text" id="sos-fn" class="sr-input" value="Theresa"></div>
                                 <div class="sr-field"><label>Last Name</label><input type="text" id="sos-ln" class="sr-input" value="Gaspar"></div>
                                 <div class="sr-field"><label>Mobile Number (11 digits)</label><input type="tel" id="sos-mob" maxlength="11" inputmode="numeric" class="sr-input" value="09366185780" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)"></div>
                                 <button type="button" class="sr-btn-blue sr-btn" data-action="confirm-reg">Confirm</button>
@@ -584,7 +763,7 @@ footer { text-align: center; padding: 1.75rem; font-size: 0.85rem; color: var(--
                                     </div>
                                     <strong style="font-size:0.74rem; display:block; margin-bottom:0.25rem;">Emergency Contact</strong>
                                     <div class="sr-card" style="margin-bottom:0.42rem; font-size:0.58rem; line-height:1.45;">
-                                        <span style="color:#6b7280; font-size:0.5rem;">FIRST NAME</span><br><strong id="pv-sfn">Maria</strong><br>
+                                        <span style="color:#6b7280; font-size:0.5rem;">FIRST NAME</span><br><strong id="pv-sfn">Theresa</strong><br>
                                         <span style="color:#6b7280; font-size:0.5rem;">LAST NAME</span><br><strong id="pv-sln">Gaspar</strong><br>
                                         <span style="color:#6b7280; font-size:0.5rem;">MOBILE NUMBER (11 DIGITS)</span><br><strong id="pv-sos-mob">09366185780</strong>
                                     </div>
@@ -594,7 +773,7 @@ footer { text-align: center; padding: 1.75rem; font-size: 0.85rem; color: var(--
                                 <div id="prof-edit-mode" style="display:none;">
                                     <div class="sr-field"><label>First Name</label><input type="text" id="ed-fn" class="sr-input" value="Trixie"></div>
                                     <div class="sr-field"><label>Last Name</label><input type="text" id="ed-ln" class="sr-input" value="Gaspar"></div>
-                                    <div class="sr-field"><label>Emergency First Name</label><input type="text" id="ed-sfn" class="sr-input" value="Maria"></div>
+                                    <div class="sr-field"><label>Emergency First Name</label><input type="text" id="ed-sfn" class="sr-input" value="Theresa"></div>
                                     <div class="sr-field"><label>Emergency Last Name</label><input type="text" id="ed-sln" class="sr-input" value="Gaspar"></div>
                                     <div class="sr-field"><label>Emergency Mobile (11 digits)</label><input type="tel" id="ed-smob" maxlength="11" inputmode="numeric" class="sr-input" value="09366185780" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,11)"></div>
                                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.35rem;">
@@ -701,6 +880,17 @@ function goScreen(id) {
 
 function setAppScenario(mode) {
     goScreen('sc-home');
+	    const capTexts = {
+        safe: '[READY TO RIDE] Driver helmet worn & breath test passed → Ignition unlocked ("All Clear").',
+        alc: '[ALCOHOL DETECTED] Under influence of alcohol → Ignition stays locked & logged in History.',
+        pass: '[WITH PASSENGER] Tandem mode verified Driver & Passenger helmets not swapped → Safe to ride.',
+        swap: '[HELMETS SWAPPED] Passenger helmet detected in driver zone → Ignition locked to prevent bypass.',
+        pos: '[OUT OF POSITION] Driver too far from motorcycle → Warning: Engine cuts off in 9s.',
+        crash: '[ACCIDENT SMS ALERT] Collision detected → Automated SAFERIDEAPP SMS with Google Maps link sent.'
+    };
+    const capBox = document.querySelector('.sim-caption');
+    if (capBox && capTexts[mode]) capBox.textContent = capTexts[mode];
+
     const banner = document.getElementById('ride-banner');
     const alcTxt = document.getElementById('dash-alc-txt');
     const tanTxt = document.getElementById('dash-tan-txt');
@@ -793,7 +983,7 @@ document.addEventListener('click', function (e) {
         if (smob.length !== 11) { alert('Emergency contact mobile number must be exactly 11 digits.'); return; }
         const fn = document.getElementById('reg-fn').value || 'Trixie';
         const ln = document.getElementById('reg-ln').value || 'Gaspar';
-        const sfn = document.getElementById('sos-fn').value || 'Maria';
+        const sfn = document.getElementById('sos-fn').value || 'Theresa';
         const sln = document.getElementById('sos-ln').value || 'Gaspar';
         document.getElementById('pv-fn').textContent = fn;
         document.getElementById('pv-ln').textContent = ln;
@@ -819,7 +1009,7 @@ document.addEventListener('click', function (e) {
         if (smob.length !== 11) { alert('Emergency mobile number must be exactly 11 digits.'); return; }
         const fn = document.getElementById('ed-fn').value || 'Trixie';
         const ln = document.getElementById('ed-ln').value || 'Gaspar';
-        const sfn = document.getElementById('ed-sfn').value || 'Maria';
+        const sfn = document.getElementById('ed-sfn').value || 'Theresa';
         const sln = document.getElementById('ed-sln').value || 'Gaspar';
         document.getElementById('pv-fn').textContent = fn;
         document.getElementById('pv-ln').textContent = ln;
